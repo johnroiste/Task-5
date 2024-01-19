@@ -1,3 +1,7 @@
+package util_csv;
+
+import model.Person;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -5,50 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-class Person {
-    private int id;
-    private String firstName;
-    private String lastName;
-    private String ppsNumber;
+public class CSVFile {
 
-    public Person(int id, String firstName, String lastName, String ppsNumber) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.ppsNumber = ppsNumber;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getppsNumber() {
-        return ppsNumber;
-    }
-
-    @Override
-    public String toString() {
-        return id + "," + firstName + "," + lastName + "," + ppsNumber;
-    }
-}
-
-class CSVFile {
     private String filePath;
     private List<Person> data;
-
     public CSVFile(String filePath) {
         this.filePath = filePath;
         this.data = readCSVFile();
     }
-
     private List<Person> readCSVFile() {
         List<Person> data = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -64,13 +32,22 @@ class CSVFile {
         }
         return data;
     }
-
     public void printCSV() {
         for (Person person : data) {
             System.out.println(person);
         }
     }
-
+    public static void searchCSV(CSVFile csvFile) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter ID to search: ");
+        while(scanner.hasNextInt() == false) {
+            System.out.println("Error - please re-enter a valid integer value: ");
+            scanner.nextLine();     // Advances this scanner past the current line and returns the input that was skipped.
+        }
+        int searchId = scanner.nextInt();
+        csvFile.searchPerson(searchId);
+        scanner.close();
+    }
     public void searchPerson(int id) {
         boolean found = false;
         for (Person person : data) {
@@ -84,20 +61,5 @@ class CSVFile {
         if (!found) {
             System.out.println("Person with ID " + id + " not found.");
         }
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        CSVFile csvFile = new CSVFile("data.csv");
-        csvFile.printCSV();
-        searchCSV(csvFile);
-    }
-
-    private static void searchCSV(CSVFile csvFile) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter ID to search: ");
-        int searchId = scanner.nextInt();
-        csvFile.searchPerson(searchId);
     }
 }
